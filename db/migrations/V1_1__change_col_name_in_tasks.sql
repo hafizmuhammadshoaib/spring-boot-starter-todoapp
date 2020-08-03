@@ -1,0 +1,1 @@
+ALTER TABLE tasks CHANGE `userId` `user_id` int(11);
