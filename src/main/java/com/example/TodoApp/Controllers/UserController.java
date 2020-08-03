@@ -1,12 +1,10 @@
 package com.example.TodoApp.Controllers;
 
-import com.example.TodoApp.DTOs.UserDTOMapper;
 import com.example.TodoApp.DTOs.UserMsDTO;
 import com.example.TodoApp.Entities.User;
 import com.example.TodoApp.Exceptions.UniqueConstraintException;
 import com.example.TodoApp.Exceptions.UserNotFoundException;
 import com.example.TodoApp.Services.UserService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +24,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private ModelMapper modelMapper;
 
 
     @GetMapping
