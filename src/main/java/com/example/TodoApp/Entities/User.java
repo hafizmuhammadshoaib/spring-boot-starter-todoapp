@@ -5,6 +5,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -30,6 +31,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Task> tasks;
+
+    @NotBlank
+    @Size(max = 120)
+    private String password;
 
     public List<Task> getTasks() {
         return tasks;
@@ -60,5 +65,13 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

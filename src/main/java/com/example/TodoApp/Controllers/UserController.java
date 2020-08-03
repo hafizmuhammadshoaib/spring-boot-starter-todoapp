@@ -47,16 +47,16 @@ public class UserController {
 
     }
 
-    @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
-
-        try {
-            return userService.createUser(user);
-        } catch (UniqueConstraintException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
-        }
-
-    }
+//    @PostMapping
+//    public User createUser(@Valid @RequestBody User user) {
+//
+//        try {
+//            return userService.createUser(user);
+//        } catch (UniqueConstraintException e) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+//        }
+//
+//    }
 
     @PutMapping(path = "/{id}")
     public User updateUser(@PathVariable("id") int id, @RequestBody User user) {

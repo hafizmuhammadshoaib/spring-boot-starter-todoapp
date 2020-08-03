@@ -6,8 +6,11 @@ import com.example.TodoApp.Exceptions.UserNotFoundException;
 import com.example.TodoApp.Repository.TaskRepository;
 import com.example.TodoApp.Repository.UserRepository;
 import com.example.TodoApp.Services.TaskService;
+import com.example.TodoApp.Services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,19 +24,25 @@ public class TaskController {
     @Autowired
     TaskService taskService;
 
-    @PostMapping(path = "/{userId}")
-    public void createOrder(@PathVariable int userId, @RequestBody Task task)  {
+    @PostMapping
+    public void createOrder(@RequestBody Task task) {
         try {
+            UserDetailsImpl userDetails =
+                    (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            int userId = userDetails.getId();
             taskService.createTask(userId, task);
         } catch (UserNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @GetMapping(path = "/{userId}")
-    public List<Task> getTasks(@PathVariable int userId) {
+    @GetMapping
+    public List<Task> getTasks() {
         try {
-          return taskService.getTasks(userId);
+            UserDetailsImpl userDetails =
+                    (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            int userId = userDetails.getId();
+            return taskService.getTasks(userId);
         } catch (UserNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

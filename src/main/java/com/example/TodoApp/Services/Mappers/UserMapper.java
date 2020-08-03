@@ -1,5 +1,6 @@
 package com.example.TodoApp.Services.Mappers;
 
+import com.example.TodoApp.DTOs.SignInResDTO;
 import com.example.TodoApp.DTOs.UserMsDTO;
 import com.example.TodoApp.Entities.User;
 import org.mapstruct.Mapper;
@@ -15,4 +16,6 @@ public interface UserMapper {
     UserMsDTO userToUserMsDto(User user);
 
     List<UserMsDTO> usersToUserDtos(List<User>users);
+
+    SignInResDTO userToSignInDto(SignInResDTO user);
 }
