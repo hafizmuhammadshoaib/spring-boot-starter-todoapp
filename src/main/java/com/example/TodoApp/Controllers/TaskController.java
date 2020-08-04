@@ -1,20 +1,16 @@
 package com.example.TodoApp.Controllers;
 
 import com.example.TodoApp.Entities.Task;
-import com.example.TodoApp.Entities.User;
 import com.example.TodoApp.Exceptions.UserNotFoundException;
-import com.example.TodoApp.Repository.TaskRepository;
-import com.example.TodoApp.Repository.UserRepository;
 import com.example.TodoApp.Services.TaskService;
 import com.example.TodoApp.Services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -37,12 +33,15 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getTasks() {
+    public Map<String, Object> getTasks(@RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "3") int size,@RequestParam(defaultValue = "") String search) {
         try {
             UserDetailsImpl userDetails =
                     (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             int userId = userDetails.getId();
-            return taskService.getTasks(userId);
+            System.out.println("page"+page);
+            System.out.println("size"+size);
+            return taskService.getTasks(userId,page,size,search);
         } catch (UserNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
