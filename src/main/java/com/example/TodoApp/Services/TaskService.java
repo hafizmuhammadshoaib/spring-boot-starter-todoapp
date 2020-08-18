@@ -6,13 +6,15 @@ import com.example.TodoApp.Exceptions.UserNotFoundException;
 import com.example.TodoApp.Repository.TaskRepository;
 import com.example.TodoApp.Repository.UserRepository;
 import net.bytebuddy.build.HashCodeAndEqualsPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PagedListHolder;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.*;
 
 @Service
@@ -36,37 +38,13 @@ public class TaskService {
     }
 
     public Map<String, Object> getTasks(int userId, int page, int size, String search) throws UserNotFoundException {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (!userOptional.isPresent())
-            throw new UserNotFoundException("User Not Found");
-        List<Task> tasks = userOptional.get().getTasks();
-        if (search.length() > 0) {
-            List<Task> searchedList = new ArrayList<>();
-            for (int i = 0; i < tasks.size(); i++) {
-                if (tasks.get(i).getTodo().equals(search)) {
-                    searchedList.add(tasks.get(i));
-                    break;
-                }
-            }
-            tasks = searchedList;
-        }
-
-        MutableSortDefinition mutableSortDefinition = new MutableSortDefinition("id", true, false);
-        PagedListHolder<Task> pagedListHolder = new PagedListHolder<Task>(tasks);
-        pagedListHolder.setSort(mutableSortDefinition);
-        pagedListHolder.resort();
-        pagedListHolder.setPage(page);
-        pagedListHolder.setPageSize(size);
+        Page<Task> taskPage = taskRepository.findByUserId(userId, PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "todo")));
         Map<String, Object> response = new HashMap<>();
-        response.put("currentPage", pagedListHolder.getPage());
-        response.put("pageSize", pagedListHolder.getPageSize());
-        response.put("totalPages", pagedListHolder.getPageCount());
-        response.put("totalElements", pagedListHolder.getNrOfElements());
-        response.put("isLastPage", pagedListHolder.isLastPage());
-        response.put("tasks", pagedListHolder.getPageList());
-
-
+        response.put("tasks", taskPage.getContent());
+        response.put("total", taskPage.getTotalElements());
+        response.put("pageSize", taskPage.getSize());
+        response.put("totalPages", taskPage.getTotalPages());
+        response.put("currentPage", page);
         return response;
-
     }
 }
